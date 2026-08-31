@@ -1,4 +1,4 @@
-# AGENTS.md — China CAM/AAM Lens 작업 규칙
+# AGENTS.md — China Battery Lens 작업 규칙
 
 중국 양극재·음극재 소재사 전문 시장 인텔리전스 서비스. **무엇을** 만드는지는 [PRD.md](PRD.md), **어떤 순서로**는 [plan.md](plan.md). 이 문서는 **어떻게 일할지**만 다룬다. BatteryLens 프레임워크를 계승하며, 아래는 중국 스코프의 델타를 포함한 전체 규칙이다.
 

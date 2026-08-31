@@ -1,4 +1,4 @@
-# plan.md — China CAM/AAM Lens 구현 순서
+# plan.md — China Battery Lens 구현 순서
 
 > 각 Phase는 앞 Phase에 의존한다. 순서대로 진행하고 항목별 **완료 기준**을 충족해야 체크한다. 규칙은 [AGENTS.md](AGENTS.md), 요구사항은 [PRD.md](PRD.md). BatteryLens plan을 계승하되 중국 스택·번역·소재군 세그먼트를 반영했다.
 
