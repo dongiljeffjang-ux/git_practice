@@ -8,8 +8,7 @@
   완료 기준: 파이프라인 스모크와 web dev 서버가 로컬에서 뜬다.
 - [ ] **0.2 외부 계정·키 준비**: 필요한 키(Supabase, Vercel, AKShare 무료·CNINFO Data Service 조건 확인, Anthropic/OpenAI, Resend)를 `docs/setup.md`로 정리. 유료 소스는 보류.
   완료 기준: 키가 secrets·`.env`에 세팅되어 스모크 통과.
-- [ ] **0.3 소스 접근 확정**: 검증 리서치 결과로 소스별 판정(가능/조건부/불가)·접근조건을 `docs/sources.md`에 기록. CNINFO API 인증조건, GGII/公众号 크롤링·WeWe RSS 실효성, robots 정책 확정.
-  완료 기준: 각 소스의 접근 방법·제약·폴백이 문서화됨.
+- [x] **0.3 소스 접근 확정**: 검증 완료 → `docs/sources.md`. MVP 무료 스택(AKShare·CNINFO·HKEXnews·36kr·GNews-zh·CnEVPost) 확정, 유료 헤지(Finlight·FinancialFilings·CNINFO API)는 승인 후. 남은 것: CNINFO 공식 API·FinancialFilings 상위 티어 **비용은 계약 전 직접 견적**(도메인 차단으로 미확인).
 - [ ] **0.4 DB 스키마 v1**: PRD §7.1 테이블을 마이그레이션으로 생성(소재군 세그먼트 배열 포함).
   완료 기준: 빈 프로젝트에 오류 없이 적용.
 - [ ] **0.5 companies.yaml 확정(발견 패스)**: 중국 양극재·음극재 소재사 발견 패스로 목록 도출 → 티커(.SZ/.SS/.HK/.BJ)·CNINFO 코드·소재군 세그먼트(복수)·중/영/한 별칭·상장여부 채움. 비상장사 표시. 발주자 확정.
