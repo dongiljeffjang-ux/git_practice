@@ -2,10 +2,11 @@
 
 > 배터리 밸류체인 시장 인텔리전스 서비스. 매일 자동으로 뉴스·공시·주가를 수집→분류→회사별 시계열로 축적하고, 데일리 리포트·산업 트렌드 대시보드·정기 보고서·비교 대시보드·인터랙티브 챗·관계도를 제공한다.
 >
-> 문서 버전: v1.3 (2026-08-31) | 작성: 기획 세션(Claude) + 발주자 확정 | 구현: Codex
+> 문서 버전: v1.4 (2026-08-31) | 작성: 기획 세션(Claude) + 발주자 확정 | 구현: Codex
 > v1.1: F5 산업 트렌드 대시보드 추가, 트렌드 시드 백필 반영(이하 F5~F9 → F6~F10으로 순연)
 > v1.2: F2를 2단계(스니펫 게이트 → 본문 정독) 파이프라인으로 개정, §6.2에 "일시적 정독 허용, 본문 저장 금지" 명문화, 본문 크롤링 리스크 추가
 > v1.3: F4를 밸류체인 세그먼트별 데일리 리포트(동향 요약 + 세그먼트별 주요 기사 Top 5, 원문 링크)로 개정, F6 회사 페이지 선택 UI를 밸류체인별 그룹화 + 교차 비교 허용으로 개정
+> v1.4: 발견 패스 결과로 부록 A 회사 목록 개정(누락 7사 추가, 제련성 제외, 켐코 유지), 회사에 밸류체인 세그먼트 복수 태그 허용(수직겸업사 대응), docs/company-discovery.md 추가
 > 함께 읽기: [AGENTS.md](AGENTS.md) (작업 규칙), [plan.md](plan.md) (구현 순서)
 
 ---
@@ -41,8 +42,9 @@
 | 경쟁-소재 | **양극재·음극재만** (전해질·분리막 제외, 중국 포함) |
 | 원료 | **전구체사 + 리사이클링만** (광산·제련 제외) |
 
-- 초기 30~50개사. 목록은 코드가 아닌 **`companies.yaml`** 설정 파일로 관리 (초안: 부록 A).
-- 회사별 필드: 한/영/중 명칭·별칭, 검색 키워드(언어별), 상장 티커(yfinance 접미사 포함), DART corp_code, SEC CIK, 카테고리, 국가.
+- 초기 약 50개사. 목록은 코드가 아닌 **`companies.yaml`** 설정 파일로 관리 (확정 목록: 부록 A, 근거: docs/company-discovery.md).
+- 회사별 필드: 한/영/중 명칭·별칭, 검색 키워드(언어별), 상장 티커(yfinance 접미사 포함), DART corp_code, SEC CIK, **밸류체인 세그먼트(복수 태그 허용)**, 국가.
+- **복수 세그먼트**: 수직겸업사(예: Brunp = 전구체+리사이클, Ronbay = 양극+전구체, Redwood = 리사이클+양극)는 한 세그먼트로 안 잡히므로 세그먼트를 배열로 둔다. 데일리 리포트·회사 그룹 선택에서 한 회사가 여러 섹션에 등장할 수 있다.
 
 ### 3.2 범위 외 (명시)
 
@@ -200,7 +202,7 @@
 
 ### 7.1 개념 데이터 모델
 
-- `companies` — 회사 마스터 (companies.yaml과 동기화)
+- `companies` — 회사 마스터 (companies.yaml과 동기화). 밸류체인 세그먼트는 **배열/조인(복수 태그)**로 저장
 - `articles` — 기사·공시 메타 (제목, 링크, 발행일, 언론사, 자체 요약, 언어, 소스 종류, 중복 클러스터 id, `body_fetched` 본문 정독 성공 여부). **본문 원문 컬럼은 두지 않는다**(§6.2)
 - `article_companies` — 기사↔회사 다대다 + 카테고리 태그
 - `market_events` — 시장/정책 트랙 항목
@@ -239,25 +241,26 @@
 
 ---
 
-## 부록 A. 초기 회사 목록 초안
+## 부록 A. 초기 회사 목록 (v1.4 — 발견 패스 반영)
 
-> **초안이다.** 티커·표기는 구현 시 검증 필수(AGENTS.md 규칙). DART corp_code·SEC CIK는 Phase 0에서 매핑 스크립트로 채운다. 발주자 검토 후 `companies.yaml`로 확정.
+> 티커·표기는 구현 시 검증 필수(AGENTS.md 규칙). DART corp_code·SEC CIK와 **(티커 확인) 표시 종목·중국사 사명**은 Phase 0.5에서 매핑·검증한다. `[ ]`는 복수 세그먼트 태그. 발견 근거는 docs/company-discovery.md. **v1.4 변경**: 굵은 항목 추가, ~~취소선~~ 제외.
 
-**자사**: 포스코퓨처엠(003670.KS)
+**자사**: 포스코퓨처엠(003670.KS) `[양극재·음극재]`
 
-**고객-셀**: LG에너지솔루션(373220.KS) · 삼성SDI(006400.KS) · SK온(비상장, SK이노베이션 096770.KS 경유) · CATL(300750.SZ) · BYD(002594.SZ/1211.HK) · Panasonic Energy(6752.T) · EVE Energy(300014.SZ) · CALB(3931.HK) · Gotion High-tech(002074.SZ) · Sunwoda(300207.SZ)
+**고객-셀**: LG에너지솔루션(373220.KS) · 삼성SDI(006400.KS) · SK온(비상장, SK이노베이션 096770.KS 경유) · CATL(300750.SZ) · BYD(002594.SZ/1211.HK) `[셀·OEM]` · Panasonic Energy(6752.T) · EVE Energy(300014.SZ) · CALB(3931.HK) · Gotion High-tech(002074.SZ) · Sunwoda(300207.SZ) · **Hithium 海辰储能(티커 확인)** · **REPT Battero 瑞浦兰钧(0666.HK)**
 
-**고객-OEM (비중국권)**: Tesla(TSLA) · GM(GM) · Ford(F) · Volkswagen(VOW3.DE) · BMW(BMW.DE) · Mercedes-Benz(MBG.DE) · Stellantis(STLA) · 현대차(005380.KS) · 기아(000270.KS) · Toyota(7203.T) · Rivian(RIVN)
+**고객-OEM (비중국권)**: Tesla(TSLA) · GM(GM) · Ford(F) · Volkswagen(VOW3.DE) · BMW(BMW.DE) · Mercedes-Benz(MBG.DE) · Stellantis(STLA) · 현대차(005380.KS) · 기아(000270.KS) · Toyota(7203.T) · Rivian(RIVN) · **Honda(7267.T)** · **Nissan(7201.T)** · **Renault/Ampere(RNO.PA)**
 
-**경쟁-양극재**: 에코프로비엠(247540.KQ) · 엘앤에프(066970.KS) · 코스모신소재(005070.KS) · LG화학(051910.KS, 양극재 사업) · Umicore(UMI.BR) · BASF(BAS.DE) · Sumitomo Metal Mining(5713.T) · Ronbay(688005.SS) · Hunan Yuneng(301358.SZ, LFP) · Dynanonic(300769.SZ, LFP) · XTC New Energy(688778.SS)
+**경쟁-양극재**: 에코프로비엠(247540.KQ) · 엘앤에프(066970.KS) · 코스모신소재(005070.KS) · LG화학(051910.KS, 양극재 사업) · Umicore(UMI.BR) · BASF(BAS.DE) · Sumitomo Metal Mining(5713.T) · Ronbay(688005.SS) `[양극·전구체]` · Hunan Yuneng(301358.SZ, LFP) · Dynanonic(300769.SZ, LFP) · XTC New Energy(688778.SS) · **Reshine(사명·티커 확인 — 2025 삼원계 출하 1위)**
 
-**경쟁-음극재**: 대주전자재료(078600.KQ, 실리콘) · BTR New Material(북증) · Shanshan(600884.SS) · Putailai(603659.SS) · Zhongke Electric(300035.SZ) · Resonac(4004.T) · Mitsubishi Chemical(4188.T)
+**경쟁-음극재**: 대주전자재료(078600.KQ, 실리콘) · BTR New Material(북증 835185.BJ, 확인) · Shanshan(600884.SS) `[양극·음극]` · Putailai(603659.SS) · Zhongke Electric(300035.SZ) · Resonac(4004.T) · Mitsubishi Chemical(4188.T)
 
-**원료-전구체**: 에코프로머티리얼즈(450080.KS) · 고려아연(010130.KS, 켐코 경유) · LS MnM(비상장) · CNGR(300919.SZ) · GEM(002340.SZ) · Huayou Cobalt(603799.SS)
+**원료-전구체**: 에코프로머티리얼즈(450080.KS) · 켐코 KEMCO(비상장, 고려아연·LG화학 JV) · CNGR(300919.SZ) `[전구체·리사이클]` · GEM(002340.SZ) `[전구체·리사이클]` · Huayou Cobalt(603799.SS) `[전구체·리사이클]` · **Brunp 邦普(비상장, CATL 자회사)** `[전구체·리사이클]`
+  - ~~고려아연(제련 성격 — 제외, 켐코만 유지)~~ · ~~LS MnM(제련·정련 — 제외)~~
 
-**원료-리사이클링**: 성일하이텍(365340.KQ) · 새빗켐(107600.KQ) · 에코프로씨엔지(비상장) · Redwood Materials(비상장) · Ascend Elements(비상장)
+**원료-리사이클링**: 성일하이텍(365340.KQ) · 새빗켐(107600.KQ) · 에코프로씨엔지(비상장) · Redwood Materials(비상장, 미국) `[리사이클·양극]` · Ascend Elements(비상장, 미국) `[리사이클·양극]`
 
-(총 46개사)
+(총 약 52개사. 발견 패스에서 후보로 나왔으나 미확정: AESC/Envision·SVOLT(셀), Easpring·Bamo(양극), Shangtai·Kaijin(음극), Li-Cycle(리사이클) — 발주자 추가 판단 대기.)
 
 ## 부록 B. 이벤트 분류 체계
 
