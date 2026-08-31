@@ -27,7 +27,7 @@ pipeline/      # Python — 수집·정독·번역·요약·리포트 배치
   llm/         # 프로바이더 중립 레이어 + 프롬프트(번역 사전 포함, 코드와 분리된 파일)
 web/           # Next.js(TypeScript) — 대시보드·챗·관리자 (한국어 UI)
 supabase/      # 마이그레이션 SQL (스키마 단일 출처)
-companies.yaml # 중국 소재사 마스터 (부록 A에서 확정, 소재군 세그먼트 배열)
+companies.yaml # 중국 셀+소재사 마스터 (부록 A에서 확정, 유형 태그 배열: 셀/양극/음극)
 .github/workflows/  # daily.yml, weekly.yml, monthly.yml
 ```
 
